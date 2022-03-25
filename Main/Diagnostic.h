@@ -1,4 +1,6 @@
 #include "Arduino.h"
+#include <Dynamixel2Arduino.h>
+
 
 #ifndef Diagnostic_h
 #define Diagnostic_h
@@ -8,14 +10,20 @@ class Diagnostic
     public:
         Diagnostic();
         void setAll(int protocol, int baudrate, int id, int model);
-        static void setSerial(char serial);
+        static void setActive(int active);
 
-        static void listAll();
+        static void listActive(Diagnostic actuators[]);
+        static void listAll(Diagnostic actuator[]);
+
+        static void enableDXL(Diagnostic actuators[], Dynamixel2Arduino dxl);
+
+        static void testPosition(Diagnostic actuators[], Dynamixel2Arduino dxl);
 
         int getProtocol();
         int getBaudrate();
         int getID();
-        int getModel();
+        char* getModel();
+        static int getActive();
         static int getCount();
 
     private:
@@ -26,6 +34,12 @@ class Diagnostic
         int _baudrate;
         int _id;
         int _model;
+
+        static int _active;
 };
+
+int timedSelection(char prompt[], int timer);
+
+int selection(char prompt[]);
 
 #endif

@@ -16,42 +16,9 @@
 
 #include <Dynamixel2Arduino.h>
 #include "Diagnostic.h"
+#include "Definitions.h"
 
-#define ARDUINO_OpenCR
 
-// Please modify it to suit your hardware.
-#if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560) // When using DynamixelShield
-  #include <SoftwareSerial.h>
-  SoftwareSerial soft_serial(7, 8); // DYNAMIXELShield UART RX/TX
-  #define DXL_SERIAL   Serial
-  #define DEBUG_SERIAL soft_serial
-  const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
-#elif defined(ARDUINO_SAM_DUE) // When using DynamixelShield
-  #define DXL_SERIAL   Serial
-  #define DEBUG_SERIAL SerialUSB
-  const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
-#elif defined(ARDUINO_SAM_ZERO) // When using DynamixelShield
-  #define DXL_SERIAL   Serial1
-  #define DEBUG_SERIAL SerialUSB
-  const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
-#elif defined(ARDUINO_OpenCM904) // When using official ROBOTIS board with DXL circuit.
-  #define DXL_SERIAL   Serial3 //OpenCM9.04 EXP Board's DXL port Serial. (Serial1 for the DXL port on the OpenCM 9.04 board)
-  #define DEBUG_SERIAL Serial
-  const uint8_t DXL_DIR_PIN = 22; //OpenCM9.04 EXP Board's DIR PIN. (28 for the DXL port on the OpenCM 9.04 board)
-#elif defined(ARDUINO_OpenCR) // When using official ROBOTIS board with DXL circuit.
-  #define DXL_SERIAL   Serial3
-  #define DEBUG_SERIAL Serial
-  const uint8_t DXL_DIR_PIN = 84; // OpenCR Board's DIR PIN.
-  // For OpenCR, there is a DXL Power Enable pin, so you must initialize and control it.
-  // Reference link : https://github.com/ROBOTIS-GIT/OpenCR/blob/master/arduino/opencr_arduino/opencr/libraries/DynamixelSDK/src/dynamixel_sdk/port_handler_arduino.cpp#L78
-#else // Other boards when using DynamixelShield
-  #define DXL_SERIAL   Serial1
-  #define DEBUG_SERIAL Serial
-  const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
-#endif
- 
-
-#define MAX_BAUD  5
 const int32_t baud[MAX_BAUD] = {57600, 115200, 1000000, 2000000, 3000000};
 
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
@@ -111,21 +78,38 @@ void setup() {
   DEBUG_SERIAL.print(found_dynamixel);
   DEBUG_SERIAL.println(" DYNAMIXEL(s) found!");
 
-for(int index = 0; index < Diagnostic::getCount(); index++) {
-DEBUG_SERIAL.print(index);
-DEBUG_SERIAL.print(") ID:");
-DEBUG_SERIAL.print(connected[index].getID());
-DEBUG_SERIAL.print(" Model:");
-DEBUG_SERIAL.print(connected[index].getModel());
-DEBUG_SERIAL.print(" Protocol:");
-DEBUG_SERIAL.print(connected[index].getProtocol());
-DEBUG_SERIAL.print(" Baudrate:");
-DEBUG_SERIAL.println(connected[index].getBaudrate());
-}
+
+Diagnostic::listAll(connected);
+
 
 }
 
 void loop() {
+int choice = -1;
+choice = int(selection("Please select the servo you would like to test"));
+
+   while(Diagnostic::getActive() > Diagnostic::getCount() || Diagnostic::getActive() < 0) {
+        DEBUG_SERIAL.println("Please Choose a valid option.");
+        delay(1000);
+        Diagnostic::listAll(connected);
+        choice = selection("Please select the servo you would like to test");
+   };
+   
+   //Save the chosen servo as active, then clear the choice
+   Diagnostic::setActive(choice); 
+   Diagnostic::listActive(connected);
+
+
+  DEBUG_SERIAL.println("1) Positon Control");
+choice = int(selection("Please select the test you would like to perform:"));
+
+switch (choice){
+case 1:
+Diagnostic::testPosition(connected, dxl);
+}
+
+
 
 
 }
+
