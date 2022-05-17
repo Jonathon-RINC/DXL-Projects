@@ -33,19 +33,26 @@
 Dynamixel2Arduino Actuators(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
 
-const int Position[] = {0, -401, -815, -1246, -1645, -2058, -2441, -2841, -3229, -3648};
+const int Position[] = {0, -400, -800, -1200, -1600, -2000, -2400, -2800, -3200, -3600};
 const int DXL_Hours[] = {1, 2};
 const int DXL_Minutes[] = {3, 4};
 const int DXL_Seconds[] = {5, 6};
 
-int Hours[] = {0, 0, 0};
-int Minutes[] = {0, 0, 0};
-int Seconds[]= {0, 0, 0};
+int Time[] = {0, 0, 0};
+
+int Hours[] = {0, 0};
+int Minutes[] = {0, 0};
+int Seconds[]= {0, 0};
+
+int SerialTimeout = 0
 
 void setup() {
   
   DEBUG_SERIAL.begin(115200); //Start Debug serial
-  while(!DEBUG_SERIAL); //Hold for debug serial
+  while(!DEBUG_SERIAL | SerialTimout < 10) //Hold for debug serial
+  {
+  DEBUG_SERIAL.println("Serial Opened");
+  }
 
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
@@ -74,35 +81,33 @@ void loop() {
 
 
 //Set time randomly for testing
-Hours[0] = random(24);
-Minutes[0] = random(60);
-Seconds[0]= random(60);
+Time[0] = random(24);
+Time[1] = random(60);
+Time[2]= random(60);
   
 //Divide by 10 to get 10s place
-Hours[1] = Hours[0]/10;
-Minutes[1] = Minutes[0]/10;
-Seconds[1]= Seconds[0]/10;
+Hours[0] = Time[0]/10;
+Minutes[0] = Time[1]/10;
+Seconds[0]= Time[2]/10;
 
 //Modulus 10 to get 1s place
-Hours[2] = Hours[0]%10;
-Minutes[2] = Minutes[0]%10;
-Seconds[2]= Seconds[0]%10;
+Hours[1] = Time[0]%10;
+Minutes[1] = Time[1]%10;
+Seconds[1]= Time[2]%10;
 
-DEBUG_SERIAL.print(Hours[1]);
-DEBUG_SERIAL.print(Hours[2]);
+DEBUG_SERIAL.print(Time[0]);
 DEBUG_SERIAL.print(":");
-DEBUG_SERIAL.print(Minutes[1]);
-DEBUG_SERIAL.print(Minutes[2]);
+DEBUG_SERIAL.print(Time[1]);
 DEBUG_SERIAL.print(":");
-DEBUG_SERIAL.print(Seconds[1]);
-DEBUG_SERIAL.println(Seconds[2]);
+DEBUG_SERIAL.println(Time[2]);
     
-Actuators.setGoalPosition(DXL_Hours[0], Position[Hours[1]]);
-Actuators.setGoalPosition(DXL_Hours[1], Position[Hours[2]]);
-Actuators.setGoalPosition(DXL_Minutes[0], Position[Minutes[1]]);
-Actuators.setGoalPosition(DXL_Minutes[1], Position[Minutes[2]]);
-Actuators.setGoalPosition(DXL_Seconds[0], Position[Seconds[1]]);
-Actuators.setGoalPosition(DXL_Seconds[1], Position[Seconds[2]]);
+  for (int i = 0; i < 2; i++)
+  {
+    Actuators.setGoalPosition(DXL_Hours[i], Position[Hours[i]]);
+    Actuators.setGoalPosition(DXL_Minutes[i], Position[Minutes[i]]);
+    Actuators.setGoalPosition(DXL_Seconds[i], Position[Seconds[i]]);
+}
 
 delay(5000);
 }
+
