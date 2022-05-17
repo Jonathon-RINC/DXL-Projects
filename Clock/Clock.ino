@@ -1,19 +1,3 @@
-/*******************************************************************************
-* Copyright 2016 ROBOTIS CO., LTD.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************/
-
 #include <Dynamixel2Arduino.h>
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560) // When using DynamixelShield
@@ -46,63 +30,79 @@
   const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
 #endif
  
+Dynamixel2Arduino Actuators(DXL_SERIAL, DXL_DIR_PIN);
+using namespace ControlTableItem;
 
-const float DXL_PROTOCOL_VERSION = 2.0;
 const int Position[] = {0, -401, -815, -1246, -1645, -2058, -2441, -2841, -3229, -3648};
 const int DXL_Hours[] = {1, 2};
 const int DXL_Minutes[] = {3, 4};
 const int DXL_Seconds[] = {5, 6};
 
-Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
-
-//This namespace is required to use Control table item names
-using namespace ControlTableItem;
+int Hours[] = {0, 0, 0};
+int Minutes[] = {0, 0, 0};
+int Seconds[]= {0, 0, 0};
 
 void setup() {
-  // put your setup code here, to run once:
   
-  // Use UART port of DYNAMIXEL Shield to debug.
-  DEBUG_SERIAL.begin(115200);
-  while(!DEBUG_SERIAL);
+  DEBUG_SERIAL.begin(115200); //Start Debug serial
+  while(!DEBUG_SERIAL); //Hold for debug serial
 
-  // Set Port baudrate to 57600bps. This has to match with DYNAMIXEL baudrate.
-  dxl.begin(57600);
-  // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version.
-  dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
+  Actuators.begin(57600); //Set DXL Baudrate
+  Actuators.setPortProtocolVersion(2.0);
 
-  // Set correct position mode and enable torque
   for (int i = 0; i < 2; i++)
   {
-  dxl.torqueOff(DXL_Hours[i]);
-  dxl.setOperatingMode(DXL_Hours[i], OP_EXTENDED_POSITION);
-  dxl.torqueOn(DXL_Hours[i]);
-  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_Hours[i], 500);
+  Actuators.torqueOff(DXL_Hours[i]);
+  Actuators.setOperatingMode(DXL_Hours[i], OP_EXTENDED_POSITION);
+  Actuators.torqueOn(DXL_Hours[i]);
+  Actuators.writeControlTableItem(PROFILE_VELOCITY, DXL_Hours[i], 500);
 
-  dxl.torqueOff(DXL_Minutes[i]);
-  dxl.setOperatingMode(DXL_Minutes[i], OP_EXTENDED_POSITION);
-  dxl.torqueOn(DXL_Minutes[i]);
-  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_Minutes[i], 1000);
+  Actuators.torqueOff(DXL_Minutes[i]);
+  Actuators.setOperatingMode(DXL_Minutes[i], OP_EXTENDED_POSITION);
+  Actuators.torqueOn(DXL_Minutes[i]);
+  Actuators.writeControlTableItem(PROFILE_VELOCITY, DXL_Minutes[i], 1000);
 
-  dxl.torqueOff(DXL_Seconds[i]);
-  dxl.setOperatingMode(DXL_Seconds[i], OP_EXTENDED_POSITION);
-  dxl.torqueOn(DXL_Seconds[i]);
-  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_Seconds[i], 0);
+  Actuators.torqueOff(DXL_Seconds[i]);
+  Actuators.setOperatingMode(DXL_Seconds[i], OP_EXTENDED_POSITION);
+  Actuators.torqueOn(DXL_Seconds[i]);
+  Actuators.writeControlTableItem(PROFILE_VELOCITY, DXL_Seconds[i], 0);
   }
 
 }
 
 void loop() {
+
+
+//Set time randomly for testing
+Hours[0] = random(24);
+Minutes[0] = random(60);
+Seconds[0]= random(60);
   
-  for (int i = 0; i < 10; i++)
-  {
-    dxl.setGoalPosition(DXL_Hours[0], Position[i]);
-    dxl.setGoalPosition(DXL_Hours[1], Position[i]);
-    dxl.setGoalPosition(DXL_Minutes[0], Position[i]);
-    dxl.setGoalPosition(DXL_Minutes[1], Position[i]);
-    dxl.setGoalPosition(DXL_Seconds[0], Position[i]);
-    dxl.setGoalPosition(DXL_Seconds[1], Position[i]);
-    DEBUG_SERIAL.print("Position ");
-    DEBUG_SERIAL.println(Position[i]);
-  delay(1000);
-  }
+//Divide by 10 to get 10s place
+Hours[1] = Hours[0]/10;
+Minutes[1] = Minutes[0]/10;
+Seconds[1]= Seconds[0]/10;
+
+//Modulus 10 to get 1s place
+Hours[2] = Hours[0]%10;
+Minutes[2] = Minutes[0]%10;
+Seconds[2]= Seconds[0]%10;
+
+DEBUG_SERIAL.print(Hours[1]);
+DEBUG_SERIAL.print(Hours[2]);
+DEBUG_SERIAL.print(":");
+DEBUG_SERIAL.print(Minutes[1]);
+DEBUG_SERIAL.print(Minutes[2]);
+DEBUG_SERIAL.print(":");
+DEBUG_SERIAL.print(Seconds[1]);
+DEBUG_SERIAL.println(Seconds[2]);
+    
+Actuators.setGoalPosition(DXL_Hours[0], Position[Hours[1]]);
+Actuators.setGoalPosition(DXL_Hours[1], Position[Hours[2]]);
+Actuators.setGoalPosition(DXL_Minutes[0], Position[Minutes[1]]);
+Actuators.setGoalPosition(DXL_Minutes[1], Position[Minutes[2]]);
+Actuators.setGoalPosition(DXL_Seconds[0], Position[Seconds[1]]);
+Actuators.setGoalPosition(DXL_Seconds[1], Position[Seconds[2]]);
+
+delay(5000);
 }
