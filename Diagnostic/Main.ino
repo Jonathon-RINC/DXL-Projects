@@ -18,14 +18,10 @@
 #include "Diagnostic.h"
 #include "Definitions.h"
 
-#if defined(ARDUINO_OpenCR)
-  pinMode(BDPIN_DXL_PWR_EN, OUTPUT);
-  digitalWrite(BDPIN_DXL_PWR_EN, HIGH); 
-#endif
 
-const int32_t baud[] = {57600, 115200, 1000000, 2000000, 3000000};
+const int32_t baud[MAX_BAUD] = {57600, 115200, 1000000, 2000000, 3000000};
 
-Dynamixel2Arduino Actuators(DXL_SERIAL, DXL_DIR_PIN);
+Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
 
 //This namespace is required to use Control table item names
 using namespace ControlTableItem;
@@ -34,6 +30,12 @@ using namespace ControlTableItem;
 Diagnostic connected[253];
 
 void setup() {
+#if defined(ARDUINO_OpenCR) // When using official ROBOTIS board with DXL circuit.
+  // For OpenCR, there is a DXL Power Enable pin, so you must initialize and control it.
+  // Reference link : https://github.com/ROBOTIS-GIT/OpenCR/blob/master/arduino/opencr_arduino/opencr/libraries/DynamixelSDK/src/dynamixel_sdk/port_handler_arduino.cpp#L78
+  pinMode(BDPIN_DXL_PWR_EN, OUTPUT);
+  digitalWrite(BDPIN_DXL_PWR_EN, HIGH); 
+#endif
 
   // put your setup code here, to run once:
   int8_t index = 0;
@@ -46,25 +48,25 @@ void setup() {
     
   for(int8_t protocol = 1; protocol < 3; protocol++) {
     // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version.
-    Actuators.setPortProtocolVersion((float)protocol);
+    dxl.setPortProtocolVersion((float)protocol);
     DEBUG_SERIAL.print("SCAN PROTOCOL ");
     DEBUG_SERIAL.println(protocol);
     
-    for(index = 0; index < 5; index++) {
+    for(index = 0; index < MAX_BAUD; index++) {
       // Set Port baudrate.
       DEBUG_SERIAL.print("SCAN BAUDRATE ");
       DEBUG_SERIAL.println(baud[index]);
-      Actuators.begin(baud[index]);
+      dxl.begin(baud[index]);
       for(int id = 0; id < DXL_BROADCAST_ID; id++) {
-        //iterate until all IDs and baudradtes have been scanned
-        if(Actuators.ping(id)) {
+        //iterate until all ID in each baudrate is scanned.
+        if(dxl.ping(id)) {
           DEBUG_SERIAL.print("ID : ");
           DEBUG_SERIAL.print(id);
           DEBUG_SERIAL.print(", Model Number: ");
-          DEBUG_SERIAL.println(Actuators.getModelNumber(id));
+          DEBUG_SERIAL.println(dxl.getModelNumber(id));
 
         //After finding a DYNAMIXEL, write all of it's needed information to the object array
-        connected[found_dynamixel].setAll( protocol, baud[index], id, Actuators.getModelNumber(id));
+        connected[found_dynamixel].setAll( protocol, baud[index], id, dxl.getModelNumber(id));
 
 
           found_dynamixel++;
@@ -103,7 +105,7 @@ choice = int(selection("Please select the test you would like to perform:"));
 
 switch (choice){
 case 1:
-Diagnostic::testPosition(connected, Actuators);
+Diagnostic::testPosition(connected, dxl);
 }
 
 

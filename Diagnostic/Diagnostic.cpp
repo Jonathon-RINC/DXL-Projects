@@ -3,10 +3,6 @@
 #include "Definitions.h"
 using namespace ControlTableItem;
 
-char Diagnostic::_serial;
-int Diagnostic::_count;
-int Diagnostic::_active;
-
 Diagnostic::Diagnostic() {
         _protocol = 0;
         _baudrate = 0;

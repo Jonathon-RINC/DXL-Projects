@@ -5,6 +5,9 @@
 #define Definitions_h
 
 
+#define ARDUINO_OpenCR
+#define MAX_BAUD  5
+
 // Please modify it to suit your hardware.
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560) // When using DynamixelShield
   #include <SoftwareSerial.h>

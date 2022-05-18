@@ -44,11 +44,15 @@ int Hours[] = {0, 0};
 int Minutes[] = {0, 0};
 int Seconds[]= {0, 0};
 
+int SerialTimeout = 0
 
 void setup() {
   
   DEBUG_SERIAL.begin(115200); //Start Debug serial
-  while(!DEBUG_SERIAL)//Hold for debug serial
+  while(!DEBUG_SERIAL | SerialTimout < 10) //Hold for debug serial
+  {
+  DEBUG_SERIAL.println("Serial Opened");
+  }
 
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
@@ -91,20 +95,17 @@ Hours[1] = Time[0]%10;
 Minutes[1] = Time[1]%10;
 Seconds[1]= Time[2]%10;
 
-if (DEBUG_SERIAL)
-{
 DEBUG_SERIAL.print(Time[0]);
 DEBUG_SERIAL.print(":");
 DEBUG_SERIAL.print(Time[1]);
 DEBUG_SERIAL.print(":");
 DEBUG_SERIAL.println(Time[2]);
-}   
-
-for (int i = 0; i < 2; i++)
-{
-Actuators.setGoalPosition(DXL_Hours[i], Position[Hours[i]]);
-Actuators.setGoalPosition(DXL_Minutes[i], Position[Minutes[i]]);
-Actuators.setGoalPosition(DXL_Seconds[i], Position[Seconds[i]]);
+    
+  for (int i = 0; i < 2; i++)
+  {
+    Actuators.setGoalPosition(DXL_Hours[i], Position[Hours[i]]);
+    Actuators.setGoalPosition(DXL_Minutes[i], Position[Minutes[i]]);
+    Actuators.setGoalPosition(DXL_Seconds[i], Position[Seconds[i]]);
 }
 
 delay(5000);
