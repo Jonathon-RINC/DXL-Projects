@@ -9,7 +9,7 @@ class Diagnostic
 {
     public:
         Diagnostic();
-        void setAll(int protocol, int baudrate, int id, int model);
+        void setAll(int protocol, int baudrate, int id);
         static void setActive(int active);
 
         static void listActive(Diagnostic actuators[]);
@@ -18,11 +18,13 @@ class Diagnostic
         static void enableDXL(Diagnostic actuators[], Dynamixel2Arduino dxl);
 
         static void testPosition(Diagnostic actuators[], Dynamixel2Arduino dxl);
+        static void testVelocity(Diagnostic actuators[], Dynamixel2Arduino dxl);
+        static void testEXPosition(Diagnostic actuators[], Dynamixel2Arduino dxl);
+        static void testCompliance(Diagnostic actuators[], Dynamixel2Arduino dxl);
 
         int getProtocol();
         int getBaudrate();
         int getID();
-        char* getModel();
         static int getActive();
         static int getCount();
 
@@ -33,7 +35,6 @@ class Diagnostic
         int _protocol;
         int _baudrate;
         int _id;
-        int _model;
 
         static int _active;
 };

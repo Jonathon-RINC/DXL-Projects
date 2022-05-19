@@ -44,15 +44,11 @@ int Hours[] = {0, 0};
 int Minutes[] = {0, 0};
 int Seconds[]= {0, 0};
 
-int SerialTimeout = 0
 
 void setup() {
   
   DEBUG_SERIAL.begin(115200); //Start Debug serial
-  while(!DEBUG_SERIAL | SerialTimout < 10) //Hold for debug serial
-  {
-  DEBUG_SERIAL.println("Serial Opened");
-  }
+  while(!DEBUG_SERIAL) //Hold for debug serial
 
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
