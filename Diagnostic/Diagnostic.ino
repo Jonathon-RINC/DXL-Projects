@@ -1,19 +1,3 @@
-/*******************************************************************************
-* Copyright 2016 ROBOTIS CO., LTD.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************/
-
 #include <Dynamixel2Arduino.h>
 #include "Diagnostic.h"
 #include "Definitions.h"
@@ -42,7 +26,12 @@ void setup() {
 
   // Use UART port of DYNAMIXEL Shield to debug.
   DEBUG_SERIAL.begin(115200);   //set debugging port baudrate to 115200bps
-  while(!DEBUG_SERIAL);         //Wait until the serial port is opened
+  unsigned long start = millis();
+  while(!DEBUG_SERIAL)         //Wait until the serial port is opened with a 5 second timeout
+  {
+    if (millis() - start > 5000)
+      break;
+  }
     
   for(int8_t protocol = 2; protocol < 3; protocol++) {
     // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version.
@@ -74,6 +63,9 @@ void setup() {
   DEBUG_SERIAL.print(found_dynamixel);
   DEBUG_SERIAL.println(" DYNAMIXEL(s) found!");
 
+    if (!DEBUG_SERIAL)
+    Diagnostic::testAutomated(connected, dxl);
+      
 
 
 
@@ -103,4 +95,3 @@ choice = int(selection("Please select the servo you would like to test"));
     Diagnostic::testCompliance(connected, dxl);
 
 }
-

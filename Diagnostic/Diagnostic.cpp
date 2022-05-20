@@ -109,7 +109,7 @@ void Diagnostic::testCompliance(Diagnostic actuators[], Dynamixel2Arduino dxl) {
   dxl.setOperatingMode(actuators[Diagnostic::getActive()].getID(), OP_CURRENT_BASED_POSITION);
   dxl.writeControlTableItem(PROFILE_VELOCITY, actuators[Diagnostic::getActive()].getID(), 0);
   dxl.writeControlTableItem(CURRENT_LIMIT, actuators[Diagnostic::getActive()].getID(), 100);
-  dxl.setGoalCurrent(actuators[Diagnostic::getActive()].getID(), 100);
+  dxl.setGoalCurrent(actuators[Diagnostic::getActive()].getID(), 50);
   dxl.writeControlTableItem(LED, actuators[Diagnostic::getActive()].getID(), 1);
 
   Diagnostic::enableDXL(actuators, dxl);
@@ -243,3 +243,109 @@ int selection(char prompt[]) {
      return input;
    }
 };
+
+void Diagnostic::testAutomated(Diagnostic actuators[], Dynamixel2Arduino dxl) {
+
+    //Position automated test
+    dxl.torqueOff(actuators[Diagnostic::getActive()].getID());
+  dxl.setOperatingMode(254, OP_POSITION);
+  dxl.writeControlTableItem(PROFILE_VELOCITY, 254,  0);
+  dxl.writeControlTableItem(CURRENT_LIMIT, 254,  0);
+  dxl.writeControlTableItem(LED, 254,  1);
+
+  Diagnostic::enableDXL(actuators, dxl);
+
+  int goal = random(4096);
+
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  goal = random(4096);
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  goal = random(4096);
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  goal = random(4096);
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  dxl.writeControlTableItem(LED, 254,  0);
+
+    dxl.torqueOff(actuators[Diagnostic::getActive()].getID());
+  dxl.setOperatingMode(254, OP_VELOCITY);
+  dxl.writeControlTableItem(PROFILE_VELOCITY, 254,  0);
+  dxl.writeControlTableItem(CURRENT_LIMIT, 254,  0);
+  dxl.writeControlTableItem(LED, 254,  1);
+
+  Diagnostic::enableDXL(actuators, dxl);
+
+  dxl.setGoalVelocity(254, 100);
+  delay(3000);
+
+  dxl.setGoalVelocity(254, -100);
+  delay(3000);
+
+  dxl.setGoalVelocity(254, 100);
+  delay(3000);
+
+  dxl.setGoalVelocity(254, -100);
+  delay(3000);
+
+  dxl.setGoalVelocity(254, 0);
+
+  dxl.writeControlTableItem(LED, 254,  0);
+
+
+    //Extended Position Automated test
+    dxl.torqueOff(actuators[Diagnostic::getActive()].getID());
+    dxl.setOperatingMode(254, OP_EXTENDED_POSITION);
+    dxl.writeControlTableItem(PROFILE_VELOCITY, 254,  0);
+    dxl.writeControlTableItem(CURRENT_LIMIT, 254,  0);
+    dxl.writeControlTableItem(LED, 254,  1);
+
+  Diagnostic::enableDXL(actuators, dxl);
+
+  goal = random(8000);
+    
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  goal = random(8000);
+  goal = goal * -1;
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  goal = random(8000);
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  goal = random(8000);
+  goal = goal * -1;
+  dxl.setGoalPosition(254, goal);
+  delay(5000);
+
+  dxl.writeControlTableItem(LED, 254,  0);
+
+
+  //Compliance Automated Test
+    dxl.torqueOff(actuators[Diagnostic::getActive()].getID());
+  dxl.setOperatingMode(254, OP_POSITION);
+  dxl.setOperatingMode(254, OP_CURRENT_BASED_POSITION);
+  dxl.writeControlTableItem(PROFILE_VELOCITY, 254,  0);
+  dxl.writeControlTableItem(CURRENT_LIMIT, 254,  100);
+  dxl.setGoalCurrent(254, 50);
+  dxl.writeControlTableItem(LED, 254,  1);
+
+  Diagnostic::enableDXL(actuators, dxl);
+
+    
+  dxl.setGoalPosition(254, 0);
+
+  dxl.writeControlTableItem(LED, 254,  0);
+
+  selection("Press any key to continue");
+};
+

@@ -22,6 +22,8 @@ class Diagnostic
         static void testEXPosition(Diagnostic actuators[], Dynamixel2Arduino dxl);
         static void testCompliance(Diagnostic actuators[], Dynamixel2Arduino dxl);
 
+        static void testAutomated(Diagnostic actuators[], Dynamixel2Arduino dxl);
+
         int getProtocol();
         int getBaudrate();
         int getID();
