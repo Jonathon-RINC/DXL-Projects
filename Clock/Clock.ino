@@ -1,4 +1,5 @@
 #include <Dynamixel2Arduino.h>
+#include <RTClib.h>
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560) // When using DynamixelShield
   #include <SoftwareSerial.h>
@@ -27,8 +28,10 @@
 #else // Other boards when using DynamixelShield
   #define DXL_SERIAL   Serial1
   #define DEBUG_SERIAL Serial
-  const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
+  const uint8_t DXL_DIR_PIN = A6; // DYNAMIXEL Shield DIR PIN
 #endif
+
+RTC_DS3231 Clock;
  
 Dynamixel2Arduino Actuators(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
@@ -38,7 +41,7 @@ const int DXL_Hours[] = {1, 2};
 const int DXL_Minutes[] = {3, 4};
 const int DXL_Seconds[] = {5, 6};
 
-int Time[] = {0, 0, 0};
+int CTime[] = {0, 0, 0};
 
 int Hours[] = {0, 0};
 int Minutes[] = {0, 0};
@@ -48,7 +51,71 @@ int Seconds[]= {0, 0};
 void setup() {
   
   DEBUG_SERIAL.begin(115200); //Start Debug serial
-  while(!DEBUG_SERIAL) //Hold for debug serial
+
+
+while(!DEBUG_SERIAL)
+
+if(DEBUG_SERIAL){
+  if(!Clock.begin()) {
+        DEBUG_SERIAL.println("Couldn't find RTC!");
+        DEBUG_SERIAL.flush();
+        while (1) delay(10);
+    }
+
+  DEBUG_SERIAL.print("RTC Time: "); //Print current RTC time
+  DEBUG_SERIAL.print(Clock.now().hour());
+  DEBUG_SERIAL.print(":");
+  DEBUG_SERIAL.print(Clock.now().minute());
+  DEBUG_SERIAL.print(":");
+  DEBUG_SERIAL.println(Clock.now().second());
+
+  DEBUG_SERIAL.println("Set RTC Clock");
+
+  DEBUG_SERIAL.print("Enter Year (2022): ");
+  while (!DEBUG_SERIAL.available());
+    int year = Serial.parseInt();
+    Serial.read();
+  DEBUG_SERIAL.println(year);
+
+  DEBUG_SERIAL.print("Enter Month (1-12): ");
+  while (!DEBUG_SERIAL.available());
+    int month = Serial.parseInt();
+    Serial.read();
+  DEBUG_SERIAL.println(month);
+
+  DEBUG_SERIAL.print("Enter Day (1-31): ");
+  while (!DEBUG_SERIAL.available());
+    int day = Serial.parseInt();
+    Serial.read();
+  DEBUG_SERIAL.println(day);
+
+  DEBUG_SERIAL.print("Enter Hour (0-23): ");
+  while (!DEBUG_SERIAL.available());
+    int hour = Serial.parseInt();
+    Serial.read();
+  DEBUG_SERIAL.println(hour);
+
+  DEBUG_SERIAL.print("Enter Minute (0-59): ");
+  while (!DEBUG_SERIAL.available());
+    int minute = Serial.parseInt();
+    Serial.read();
+  DEBUG_SERIAL.println(minute);
+
+  DEBUG_SERIAL.print("Enter Second (0-59): ");
+  while (!DEBUG_SERIAL.available());
+    int second = Serial.parseInt();
+    Serial.read();
+  DEBUG_SERIAL.println(second);
+
+  Clock.adjust(DateTime(year, month, day, hour, minute, second));
+
+  DEBUG_SERIAL.print("RTC Time Set: "); //Print current RTC time
+  DEBUG_SERIAL.print(Clock.now().hour());
+  DEBUG_SERIAL.print(":");
+  DEBUG_SERIAL.print(Clock.now().minute());
+  DEBUG_SERIAL.print(":");
+  DEBUG_SERIAL.println(Clock.now().second());
+}
 
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
@@ -76,26 +143,26 @@ void setup() {
 void loop() {
 
 
-//Set time randomly for testing
-Time[0] = random(24);
-Time[1] = random(60);
-Time[2]= random(60);
+//Fetch times for clock
+CTime[0] = Clock.now().hour();
+CTime[1] = Clock.now().minute();
+CTime[2] = Clock.now().second();
   
 //Divide by 10 to get 10s place
-Hours[0] = Time[0]/10;
-Minutes[0] = Time[1]/10;
-Seconds[0]= Time[2]/10;
+Hours[0] = CTime[0]/10;
+Minutes[0] = CTime[1]/10;
+Seconds[0]= CTime[2]/10;
 
 //Modulus 10 to get 1s place
-Hours[1] = Time[0]%10;
-Minutes[1] = Time[1]%10;
-Seconds[1]= Time[2]%10;
+Hours[1] = CTime[0]%10;
+Minutes[1] = CTime[1]%10;
+Seconds[1]= CTime[2]%10;
 
-DEBUG_SERIAL.print(Time[0]);
+DEBUG_SERIAL.print(CTime[0]);
 DEBUG_SERIAL.print(":");
-DEBUG_SERIAL.print(Time[1]);
+DEBUG_SERIAL.print(CTime[1]);
 DEBUG_SERIAL.print(":");
-DEBUG_SERIAL.println(Time[2]);
+DEBUG_SERIAL.println(CTime[2]);
     
   for (int i = 0; i < 2; i++)
   {
@@ -104,6 +171,5 @@ DEBUG_SERIAL.println(Time[2]);
     Actuators.setGoalPosition(DXL_Seconds[i], Position[Seconds[i]]);
 }
 
-delay(5000);
 }
 

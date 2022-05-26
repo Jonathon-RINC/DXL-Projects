@@ -33,7 +33,7 @@
 #else // Other boards when using DynamixelShield
   #define DXL_SERIAL   Serial1
   #define DEBUG_SERIAL Serial
-  const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
+  const uint8_t DXL_DIR_PIN = A6; // DYNAMIXEL Shield DIR PIN
 #endif
  
 #endif
