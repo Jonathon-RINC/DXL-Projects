@@ -2,10 +2,7 @@
 #include "Diagnostic.h"
 #include "Definitions.h"
 
-#if defined(ARDUINO_OpenCR)
-  pinMode(BDPIN_DXL_PWR_EN, OUTPUT);
-  digitalWrite(BDPIN_DXL_PWR_EN, HIGH); 
-#endif
+
 
 const int32_t baud[5] = {57600, 115200, 1000000, 2000000, 3000000};
 
@@ -18,6 +15,10 @@ using namespace ControlTableItem;
 Diagnostic connected[253];
 
 void setup() {
+#if defined(ARDUINO_OpenCR)
+  pinMode(BDPIN_DXL_PWR_EN, OUTPUT);
+  digitalWrite(BDPIN_DXL_PWR_EN, HIGH); 
+#endif
 
   // put your setup code here, to run once:
   int8_t index = 0;

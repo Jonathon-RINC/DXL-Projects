@@ -47,15 +47,21 @@ int Hours[] = {0, 0};
 int Minutes[] = {0, 0};
 int Seconds[]= {0, 0};
 
+bool head = true;
 
 void setup() {
   
   DEBUG_SERIAL.begin(115200); //Start Debug serial
+  unsigned long start = millis();
+  while(!DEBUG_SERIAL)         //Wait until the serial port is opened with a 5 second timeout
+  {
+    if (millis() - start > 5000){
+    head = false;
+      break;
+      }
+  }
 
-
-while(!DEBUG_SERIAL)
-
-if(DEBUG_SERIAL){
+if( head == true ){
   if(!Clock.begin()) {
         DEBUG_SERIAL.println("Couldn't find RTC!");
         DEBUG_SERIAL.flush();
@@ -69,45 +75,30 @@ if(DEBUG_SERIAL){
   DEBUG_SERIAL.print(":");
   DEBUG_SERIAL.println(Clock.now().second());
 
-  DEBUG_SERIAL.println("Set RTC Clock");
-
-  DEBUG_SERIAL.print("Enter Year (2022): ");
-  while (!DEBUG_SERIAL.available());
-    int year = Serial.parseInt();
-    Serial.read();
-  DEBUG_SERIAL.println(year);
-
-  DEBUG_SERIAL.print("Enter Month (1-12): ");
-  while (!DEBUG_SERIAL.available());
-    int month = Serial.parseInt();
-    Serial.read();
-  DEBUG_SERIAL.println(month);
-
-  DEBUG_SERIAL.print("Enter Day (1-31): ");
-  while (!DEBUG_SERIAL.available());
-    int day = Serial.parseInt();
-    Serial.read();
-  DEBUG_SERIAL.println(day);
+  DEBUG_SERIAL.println("Set RTC Clock, enter invalid times to skip");
 
   DEBUG_SERIAL.print("Enter Hour (0-23): ");
   while (!DEBUG_SERIAL.available());
-    int hour = Serial.parseInt();
+    int hour = DEBUG_SERIAL.parseInt();
     Serial.read();
   DEBUG_SERIAL.println(hour);
 
   DEBUG_SERIAL.print("Enter Minute (0-59): ");
   while (!DEBUG_SERIAL.available());
-    int minute = Serial.parseInt();
+    int minute = DEBUG_SERIAL.parseInt();
     Serial.read();
   DEBUG_SERIAL.println(minute);
 
   DEBUG_SERIAL.print("Enter Second (0-59): ");
   while (!DEBUG_SERIAL.available());
-    int second = Serial.parseInt();
+    int second = DEBUG_SERIAL.parseInt();
     Serial.read();
   DEBUG_SERIAL.println(second);
 
-  Clock.adjust(DateTime(year, month, day, hour, minute, second));
+  DateTime set = DateTime(2022, 1, 1, hour, minute, second);
+
+  if(set.isValid())
+  Clock.adjust(set);
 
   DEBUG_SERIAL.print("RTC Time Set: "); //Print current RTC time
   DEBUG_SERIAL.print(Clock.now().hour());
@@ -158,11 +149,13 @@ Hours[1] = CTime[0]%10;
 Minutes[1] = CTime[1]%10;
 Seconds[1]= CTime[2]%10;
 
+if( head == true ){
 DEBUG_SERIAL.print(CTime[0]);
 DEBUG_SERIAL.print(":");
 DEBUG_SERIAL.print(CTime[1]);
 DEBUG_SERIAL.print(":");
 DEBUG_SERIAL.println(CTime[2]);
+}
     
   for (int i = 0; i < 2; i++)
   {
