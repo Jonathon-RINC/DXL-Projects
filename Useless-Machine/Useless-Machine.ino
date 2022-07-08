@@ -36,6 +36,7 @@ using namespace ControlTableItem;
 
 int speed = 100;
 uint8_t external = 0;
+uint8_t shutdown = 0;
 
 void setup() {
   Actuators.begin(57600); //Set DXL Baudrate
@@ -55,8 +56,13 @@ external = Actuators.readControlTableItem(EXTERNAL_PORT_DATA_1, 1);
 
 if ( external == 1){
 speed = speed * -1;
-delay(100);
+shutdown++;
+delay(300);
 }
 
+if ( shutdown > 5){
+Actuators.torqueOff(1);
+exit(0);
+}
 }
 

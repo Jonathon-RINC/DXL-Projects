@@ -30,10 +30,15 @@
   const uint8_t DXL_DIR_PIN = 84; // OpenCR Board's DIR PIN.
   // For OpenCR, there is a DXL Power Enable pin, so you must initialize and control it.
   // Reference link : https://github.com/ROBOTIS-GIT/OpenCR/blob/master/arduino/opencr_arduino/opencr/libraries/DynamixelSDK/src/dynamixel_sdk/port_handler_arduino.cpp#L78
+#elif defined(ARDUINO_OpenRB)  // When using OpenRB-150
+  //OpenRB does not require the DIR control pin.
+  #define DXL_SERIAL Serial1
+  #define DEBUG_SERIAL Serial
+  const int DXL_DIR_PIN = -1;
 #else // Other boards when using DynamixelShield
   #define DXL_SERIAL   Serial1
   #define DEBUG_SERIAL Serial
-  const uint8_t DXL_DIR_PIN = A6; // DYNAMIXEL Shield DIR PIN
+  const uint8_t DXL_DIR_PIN = 1; // DYNAMIXEL Shield DIR PIN
 #endif
  
 #endif
