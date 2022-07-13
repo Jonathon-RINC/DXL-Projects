@@ -35,6 +35,10 @@
   const uint8_t DXL_DIR_PIN = A6; // Arduino MKR Direction pin
 #endif
 
+bool DEBUG = true;
+
+const int onPosition = 3073;
+const int offPosition = 2048;
  
 Dynamixel2Arduino Actuators(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
@@ -47,20 +51,42 @@ void setup() {
   while(!DEBUG_SERIAL)         //Wait until the serial port is opened with a 5 second timeout
   {
     if (millis() - start > 5000){
+    DEBUG = false;
       break;
       }
   }
+    if (DEBUG)
+    DEBUG_SERIAL.println("START");
 
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
 
-  Actuators.torqueOff(1);
-  Actuators.setOperatingMode(1, OP_POSITION);
   
 
 }
 
 void loop() {
+
+for( uint8_t i = 1; i <= 7; i++) {
+  Actuators.torqueOn(i + 10);
+}
+
+
+if (DEBUG)
+DEBUG_SERIAL.println("UP");
+
+for( uint8_t i = 1; i <= 7; i++) {
+  Actuators.setGoalPosition(i + 10, onPosition);
+}
+delay(1000);
+
+if (DEBUG)
+DEBUG_SERIAL.println("DOWN");
+
+for( uint8_t i = 1; i <= 7; i++) {
+  Actuators.setGoalPosition(i + 10, offPosition);
+}
+delay(1000);
 
 }
 
