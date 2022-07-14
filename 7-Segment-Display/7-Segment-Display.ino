@@ -71,22 +71,44 @@ for( uint8_t i = 1; i <= 7; i++) {
   Actuators.torqueOn(i + 10);
 }
 
+if (DEBUG)
+DEBUG_SERIAL.println("0");
+
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
 
 if (DEBUG)
-DEBUG_SERIAL.println("UP");
+DEBUG_SERIAL.println("1");
 
-for( uint8_t i = 1; i <= 7; i++) {
-  Actuators.setGoalPosition(i + 10, onPosition);
-}
-delay(1000);
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
 
 if (DEBUG)
-DEBUG_SERIAL.println("DOWN");
+DEBUG_SERIAL.println("2");
 
-for( uint8_t i = 1; i <= 7; i++) {
-  Actuators.setGoalPosition(i + 10, offPosition);
-}
-delay(1000);
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
 
 }
 
