@@ -46,18 +46,6 @@ using namespace ControlTableItem;
 
 void setup() {
   DEBUG_SERIAL.begin(115200); //Start Debug serial
-
-  unsigned long start = millis();
-  while(!DEBUG_SERIAL)         //Wait until the serial port is opened with a 5 second timeout
-  {
-    if (millis() - start > 5000){
-    DEBUG = false;
-      break;
-      }
-  }
-    if (DEBUG)
-    DEBUG_SERIAL.println("START");
-
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
 
@@ -66,30 +54,21 @@ void setup() {
 }
 
 void loop() {
-
-for( uint8_t i = 1; i <= 7; i++) {
-  Actuators.torqueOn(i + 10);
-}
-
-if (DEBUG)
-DEBUG_SERIAL.println("0");
-
-  Actuators.setGoalPosition(11, offPosition);
-  Actuators.setGoalPosition(12, offPosition);
-  Actuators.setGoalPosition(13, offPosition);
-  Actuators.setGoalPosition(14, offPosition);
-  Actuators.setGoalPosition(15, offPosition);
-  Actuators.setGoalPosition(16, offPosition);
-  Actuators.setGoalPosition(17, offPosition);
-
 delay(5000);
 
-if (DEBUG)
-DEBUG_SERIAL.println("1");
+  Actuators.torqueOn(11);
+  Actuators.torqueOn(12);
+  Actuators.torqueOn(13);
+  Actuators.torqueOn(14);
+  Actuators.torqueOn(15);
+  Actuators.torqueOn(16);
+  Actuators.torqueOn(17);
 
+/*
+//0
   Actuators.setGoalPosition(11, onPosition);
-  Actuators.setGoalPosition(12, offPosition);
-  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
   Actuators.setGoalPosition(14, onPosition);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
@@ -97,9 +76,18 @@ DEBUG_SERIAL.println("1");
 
 delay(5000);
 
-if (DEBUG)
-DEBUG_SERIAL.println("2");
+//1
+  Actuators.setGoalPosition(11, offPosition );
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition );
+  Actuators.setGoalPosition(15, offPosition );
+  Actuators.setGoalPosition(16, offPosition );
+  Actuators.setGoalPosition(17, offPosition );
 
+delay(5000);
+
+//2
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -110,5 +98,368 @@ DEBUG_SERIAL.println("2");
 
 delay(5000);
 
-}
+//3
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, onPosition);
 
+delay(5000);
+
+//4
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+
+//5
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//6
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//7
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//8
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//9
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+*/
+
+//A
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//B
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//C
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//D
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//E
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//F
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//G
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//H
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//I
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//J
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//K
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//L
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//M
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//N
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//O
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//P
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//Q
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//R
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//S
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//T
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, offPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//U
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//V
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//W
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, offPosition);
+
+delay(5000);
+
+//X
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, onPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//Y
+  Actuators.setGoalPosition(11, offPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, onPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, onPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+
+//Z
+  Actuators.setGoalPosition(11, onPosition);
+  Actuators.setGoalPosition(12, onPosition);
+  Actuators.setGoalPosition(13, offPosition);
+  Actuators.setGoalPosition(14, onPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, onPosition);
+
+delay(5000);
+}
