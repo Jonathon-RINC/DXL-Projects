@@ -37,25 +37,25 @@
 
 bool DEBUG = true;
 
-const int onPosition = 3073;
-const int offPosition = 2048;
+const uint16_t waitTime = 5000;
+const uint16_t onPosition = 3073;
+const uint16_t offPosition = 2048;
  
+char inputArr[50];
+
 Dynamixel2Arduino Actuators(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
 
 
 void setup() {
   DEBUG_SERIAL.begin(115200); //Start Debug serial
+  while(!DEBUG_SERIAL)         //Wait until the serial port is opened with a 5 second timeout
+
   Actuators.begin(57600); //Set DXL Baudrate
   Actuators.setPortProtocolVersion(2.0);
-
-  
-
 }
 
 void loop() {
-delay(5000);
-
   Actuators.torqueOn(11);
   Actuators.torqueOn(12);
   Actuators.torqueOn(13);
@@ -64,8 +64,27 @@ delay(5000);
   Actuators.torqueOn(16);
   Actuators.torqueOn(17);
 
-/*
-//0
+for (uint8_t i; i <= 50; i++) {
+inputArr[i] = '#';
+   }
+
+    DEBUG_SERIAL.println("Input String:");
+    while (DEBUG_SERIAL.available() == 0) {
+      delay(500);
+   }
+   while (Serial.available() > 0) {
+   String input = Serial.readString();    
+    input.toCharArray(inputArr,50);
+   Serial.read();//Empty the read buffer
+   }
+
+for (uint8_t i; i <= 50; i++) {
+
+if( inputArr[i] == '#')
+break;
+
+    switch (inputArr[i]) {
+        case '0':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -73,21 +92,19 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//1
-  Actuators.setGoalPosition(11, offPosition );
+        case '1':
+  Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
-  Actuators.setGoalPosition(14, offPosition );
-  Actuators.setGoalPosition(15, offPosition );
-  Actuators.setGoalPosition(16, offPosition );
-  Actuators.setGoalPosition(17, offPosition );
+  Actuators.setGoalPosition(14, offPosition);
+  Actuators.setGoalPosition(15, offPosition);
+  Actuators.setGoalPosition(16, offPosition);
+  Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//2
+        case '2':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -95,10 +112,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//3
+        case '3':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -106,10 +122,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//4
+        case '4':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -117,11 +132,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-
-//5
+        case '5':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -129,10 +142,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//6
+        case '6':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -140,10 +152,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//7
+        case '7':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -151,10 +162,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//8
+        case '8':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -162,10 +172,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//9
+        case '9':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -173,11 +182,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-*/
-
-//A
+        case 'A':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -185,10 +192,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//B
+        case 'B':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -196,10 +202,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//C
+        case 'C':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -207,10 +212,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//D
+        case 'D':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -218,10 +222,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//E
+        case 'E':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -229,10 +232,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//F
+        case 'F':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -240,10 +242,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//G
+        case 'G':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -251,10 +252,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//H
+        case 'H':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -262,10 +262,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//I
+        case 'I':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -273,10 +272,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//J
+        case 'J':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -284,10 +282,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//K
+        case 'K':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -295,10 +292,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//L
+        case 'L':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -306,10 +302,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//M
+        case 'M':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -317,10 +312,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//N
+        case 'N':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -328,10 +322,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//O
+        case 'O':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -339,10 +332,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//P
+        case 'P':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -350,10 +342,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//Q
+        case 'Q':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -361,10 +352,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//R
+        case 'R':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -372,10 +362,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//S
+        case 'S':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -383,10 +372,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//T
+        case 'T':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, offPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -394,10 +382,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//U
+        case 'U':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -405,10 +392,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//V
+        case 'V':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -416,10 +402,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//W
+        case 'W':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -427,10 +412,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, offPosition);
+  break;
 
-delay(5000);
-
-//X
+        case 'X':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -438,10 +422,9 @@ delay(5000);
   Actuators.setGoalPosition(15, onPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//Y
+        case 'Y':
   Actuators.setGoalPosition(11, offPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, onPosition);
@@ -449,10 +432,9 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, onPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
 
-delay(5000);
-
-//Z
+        case 'Z':
   Actuators.setGoalPosition(11, onPosition);
   Actuators.setGoalPosition(12, onPosition);
   Actuators.setGoalPosition(13, offPosition);
@@ -460,6 +442,10 @@ delay(5000);
   Actuators.setGoalPosition(15, offPosition);
   Actuators.setGoalPosition(16, offPosition);
   Actuators.setGoalPosition(17, onPosition);
+  break;
+}
 
-delay(5000);
+delay(waitTime);
+
+}
 }
