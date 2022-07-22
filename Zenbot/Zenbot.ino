@@ -38,18 +38,47 @@ const uint8_t DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
 
 const float DXL_PROTOCOL_VERSION = 2.0;
 
+const int buttonPin = 16; //built in button on OpenCM Expansion Board
+int buttonState = 0;
+
 int malletRotateLowNote[8] = {0, 1975, 1975, 1975, 1975, 1975, 1975, 1997};//low octave
 int malletRotateHighNote[8] = {0, 1776, 1776, 1795, 1730, 1753, 1800, 1731};//high octave
-const int malletUp = 1625;
-const int malletDown = 2121;
-const int time2Move = 150; //millis that mallet spends dropping before it reverses direction
+int malletUp = 1625;
+int malletDown = 2121;
 
-const uint8_t ringTime = 125; // time for note to ring. 125 is 1 sixtenth note at 2 measures per second
+int reorder[8] = {0, 1, 3, 2, 7, 5, 4, 6}; 
 
-const char scale[17][7] ={           {'0', '0', '0', '0', '0', '0', '0'}, {'c', '0', '0', '0', '0', '0', '0'}, {'0', 'd', '0', '0', '0', '0', '0'}, {'0', '0', 'e', '0', '0', '0', '0'},
-{'0', '0', '0', 'f', '0', '0', '0'}, {'0', '0', '0', '0', 'g', '0', '0'}, {'0', '0', '0', '0', '0', 'a', '0'}, {'0', '0', '0', '0', '0', '0', 'b'}, {'C', '0', '0', '0', '0', '0', '0'}, 
-{'C', '0', '0', '0', '0', '0', '0'}, {'0', '0', '0', '0', '0', '0', 'b'}, {'0', '0', '0', '0', '0', 'a', '0'}, {'0', '0', '0', '0', 'g', '0', '0'}, {'0', '0', '0', 'f', '0', '0', '0'},
-{'0', '0', 'e', '0', '0', '0', '0'}, {'0', 'd', '0', '0', '0', '0', '0'}, {'c', '0', '0', '0', '0', '0', '0'} };
+int a;
+int startFrame = 0;
+int endFrame = 15;
+int time2Move = 150; //millis that mallet spends dropping before it reverses direction
+
+/* Blank pattern for easy copying
+int blankC[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int blankD[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int blankE[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int blankF[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int blankG[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int blankA[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int blankB[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+*/
+
+int odeC[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int odeD[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int odeE[160] = {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0,    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int odeF[160] = {0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,    0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int odeG[160] = {0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int odeA[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int odeB[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+// 0= no note  1=low note loud  2= high note loud
+int notesC[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int notesD[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int notesE[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int notesF[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int notesG[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int notesA[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int notesB[160] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
 
@@ -58,18 +87,14 @@ using namespace ControlTableItem;
 
 void setup() {
 
-
-  /* Use UART port of DYNAMIXEL Shield to debug.
-  DEBUG_SERIAL.begin(115200);
-  while(!DEBUG_SERIAL);
-  DEBUG_SERIAL.println("START");
-  */
-
+  // Use UART port of DYNAMIXEL Shield to debug.
+  //DEBUG_SERIAL.begin(115200);
+  //while(!DEBUG_SERIAL);
   dxl.begin(1000000);
   // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version.
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
 
-delay(5000); // delay to allow me to plug in the actuators
+delay(5000);
 
   // Turn off torque when configuring items in EEPROM area
   for (int i = 1; i < 8; i++) {
@@ -93,33 +118,225 @@ delay(5000); // delay to allow me to plug in the actuators
     delay(100);
   }
   delay(500);
+  startAnimation();
+}
+void playnotesA(int del) {
+  startFrame = 0;
+  endFrame = 31;
+
+  for (int i = startFrame; i < endFrame + 1; i++) {
+    // STRIKE NOTE
+    if (notesC[i] == 1 || notesC[i] == 2)  dxl.setGoalPosition(11, malletDown);
+    if (notesD[i] == 1 || notesD[i] == 2)  dxl.setGoalPosition(12, malletDown);
+    if (notesE[i] == 1 || notesE[i] == 2)  dxl.setGoalPosition(13, malletDown);
+    if (notesF[i] == 1 || notesF[i] == 2)  dxl.setGoalPosition(14, malletDown);
+    if (notesG[i] == 1 || notesG[i] == 2)  dxl.setGoalPosition(15, malletDown);
+    if (notesA[i] == 1 || notesA[i] == 2)  dxl.setGoalPosition(16, malletDown);
+    if (notesB[i] == 1 || notesB[i] == 2)  dxl.setGoalPosition(17, malletDown);
+    delay(time2Move);
+
+    //PREP FOR NEXT NOTE
+    if (i + 1 >= endFrame + 1) a = startFrame; else a = i + 1;
+    if (notesC[a] == 1)dxl.setGoalPosition(1, malletRotateLowNote[1]); else dxl.setGoalPosition(1, malletRotateHighNote[1]);
+    if (notesD[a] == 1)dxl.setGoalPosition(2, malletRotateLowNote[2]); else dxl.setGoalPosition(2, malletRotateHighNote[2]);
+    if (notesE[a] == 1)dxl.setGoalPosition(3, malletRotateLowNote[3]); else dxl.setGoalPosition(3, malletRotateHighNote[3]);
+    if (notesF[a] == 1)dxl.setGoalPosition(4, malletRotateLowNote[4]); else dxl.setGoalPosition(4, malletRotateHighNote[4]);
+    if (notesG[a] == 1)dxl.setGoalPosition(5, malletRotateLowNote[5]); else dxl.setGoalPosition(5, malletRotateHighNote[5]);
+    if (notesA[a] == 1)dxl.setGoalPosition(6, malletRotateLowNote[6]); else dxl.setGoalPosition(6, malletRotateHighNote[6]);
+    if (notesB[a] < 3)dxl.setGoalPosition(7, malletRotateLowNote[7]); else dxl.setGoalPosition(7, malletRotateHighNote[7]);
+    for (int i = 11; i < 18; i++) {
+      dxl.setGoalPosition(i, malletUp);
+    }
+    delay(del);
+  }
+}
+
+void playnotesB(int del) {
+  startFrame = 32;
+  endFrame = 63;
+
+  for (int i = startFrame; i < endFrame + 1; i++) {
+    // STRIKE NOTE
+    if (notesC[i] == 1 || notesC[i] == 2)  dxl.setGoalPosition(11, malletDown);
+    if (notesD[i] == 1 || notesD[i] == 2)  dxl.setGoalPosition(12, malletDown);
+    if (notesE[i] == 1 || notesE[i] == 2)  dxl.setGoalPosition(13, malletDown);
+    if (notesF[i] == 1 || notesF[i] == 2)  dxl.setGoalPosition(14, malletDown);
+    if (notesG[i] == 1 || notesG[i] == 2)  dxl.setGoalPosition(15, malletDown);
+    if (notesA[i] == 1 || notesA[i] == 2)  dxl.setGoalPosition(16, malletDown);
+    if (notesB[i] == 1 || notesB[i] == 2)  dxl.setGoalPosition(17, malletDown);
+    delay(time2Move);
+
+    //PREP FOR NEXT NOTE
+    if (i + 1 >= endFrame + 1) a = startFrame; else a = i + 1;
+    if (notesC[a] == 1)dxl.setGoalPosition(1, malletRotateLowNote[1]); else dxl.setGoalPosition(1, malletRotateHighNote[1]);
+    if (notesD[a] == 1)dxl.setGoalPosition(2, malletRotateLowNote[2]); else dxl.setGoalPosition(2, malletRotateHighNote[2]);
+    if (notesE[a] == 1)dxl.setGoalPosition(3, malletRotateLowNote[3]); else dxl.setGoalPosition(3, malletRotateHighNote[3]);
+    if (notesF[a] == 1)dxl.setGoalPosition(4, malletRotateLowNote[4]); else dxl.setGoalPosition(4, malletRotateHighNote[4]);
+    if (notesG[a] == 1)dxl.setGoalPosition(5, malletRotateLowNote[5]); else dxl.setGoalPosition(5, malletRotateHighNote[5]);
+    if (notesA[a] == 1)dxl.setGoalPosition(6, malletRotateLowNote[6]); else dxl.setGoalPosition(6, malletRotateHighNote[6]);
+    if (notesB[a] == 1)dxl.setGoalPosition(7, malletRotateLowNote[7]); else dxl.setGoalPosition(7, malletRotateHighNote[7]);
+    for (int i = 11; i < 18; i++) {
+      dxl.setGoalPosition(i, malletUp);
+    }
+    delay(del);
+  }
+}
+
+void playnotesC(int del) {
+  startFrame = 64;
+  endFrame = 160;
+
+  for (int i = startFrame; i < endFrame + 1; i++) {
+    // STRIKE NOTE
+    if (notesC[i] == 1 || notesC[i] == 2)  dxl.setGoalPosition(11, malletDown);
+    if (notesD[i] == 1 || notesD[i] == 2)  dxl.setGoalPosition(12, malletDown);
+    if (notesE[i] == 1 || notesE[i] == 2)  dxl.setGoalPosition(13, malletDown);
+    if (notesF[i] == 1 || notesF[i] == 2)  dxl.setGoalPosition(14, malletDown);
+    if (notesG[i] == 1 || notesG[i] == 2)  dxl.setGoalPosition(15, malletDown);
+    if (notesA[i] == 1 || notesA[i] == 2)  dxl.setGoalPosition(16, malletDown);
+    if (notesB[i] == 1 || notesB[i] == 2)  dxl.setGoalPosition(17, malletDown);
+    delay(time2Move);
+
+    //PREP FOR NEXT NOTE
+    if (i + 1 >= endFrame + 1) a = startFrame; else a = i + 1;
+    if (notesC[a] == 1)dxl.setGoalPosition(1, malletRotateLowNote[1]); else dxl.setGoalPosition(1, malletRotateHighNote[1]);
+    if (notesD[a] == 1)dxl.setGoalPosition(2, malletRotateLowNote[2]); else dxl.setGoalPosition(2, malletRotateHighNote[2]);
+    if (notesE[a] == 1)dxl.setGoalPosition(3, malletRotateLowNote[3]); else dxl.setGoalPosition(3, malletRotateHighNote[3]);
+    if (notesF[a] == 1)dxl.setGoalPosition(4, malletRotateLowNote[4]); else dxl.setGoalPosition(4, malletRotateHighNote[4]);
+    if (notesG[a] == 1)dxl.setGoalPosition(5, malletRotateLowNote[5]); else dxl.setGoalPosition(5, malletRotateHighNote[5]);
+    if (notesA[a] == 1)dxl.setGoalPosition(6, malletRotateLowNote[6]); else dxl.setGoalPosition(6, malletRotateHighNote[6]);
+    if (notesB[a] == 1)dxl.setGoalPosition(7, malletRotateLowNote[7]); else dxl.setGoalPosition(7, malletRotateHighNote[7]);
+    for (int i = 11; i < 18; i++) {
+      dxl.setGoalPosition(i, malletUp);
+    }
+    delay(del);
+  }
+}
+void lowerAllMallets() { //Slowly lowers all mallets to surface of drum
+  for (int i = 1; i < 8; i++) {
+    dxl.writeControlTableItem(PROFILE_VELOCITY, i + 10, 30);
+    dxl.setGoalPosition(i + 10, malletDown);
+    delay(10);
+  }
+  delay(1000);
+
+  for (int i = 1; i < 8; i++) {
+    dxl.writeControlTableItem(PROFILE_VELOCITY, i + 10, 0);
+    delay(10);
+  }
+}
+void prepFirstNotes() {
+  for (int i = 11; i < 18; i++) { //Mallets UP
+    dxl.setGoalPosition(i, malletUp);
+    delay(100);
+  }
+  //PREP FOR FIRST NOTE
+  a = 0;
+  if (notesC[a] == 1)dxl.setGoalPosition(1, malletRotateLowNote[1]); else dxl.setGoalPosition(1, malletRotateHighNote[1]);
+  if (notesD[a] == 1)dxl.setGoalPosition(2, malletRotateLowNote[2]); else dxl.setGoalPosition(2, malletRotateHighNote[2]);
+  if (notesE[a] == 1)dxl.setGoalPosition(3, malletRotateLowNote[3]); else dxl.setGoalPosition(3, malletRotateHighNote[3]);
+  if (notesF[a] == 1)dxl.setGoalPosition(4, malletRotateLowNote[4]); else dxl.setGoalPosition(4, malletRotateHighNote[4]);
+  if (notesG[a] == 1)dxl.setGoalPosition(5, malletRotateLowNote[5]); else dxl.setGoalPosition(5, malletRotateHighNote[5]);
+  if (notesA[a] == 1)dxl.setGoalPosition(6, malletRotateLowNote[6]); else dxl.setGoalPosition(6, malletRotateHighNote[6]);
+  if (notesB[a] == 1)dxl.setGoalPosition(7, malletRotateLowNote[7]); else dxl.setGoalPosition(7, malletRotateHighNote[7]);
+  delay(500);
+}
+
+void torqueAllOn() { //turns all servos on
+  for (int i = 1; i < 8; i++) {
+    dxl.torqueOn(i);
+    dxl.torqueOn(i + 10);
+    delay(100);
+  }
+  delay(500);
+}
+
+void torqueAllOff() { //turns all servos off
+  for (int i = 1; i < 8; i++) {
+    dxl.torqueOff(i);
+    dxl.torqueOff(i + 10);
+    delay(100);
+  }
+  delay(500);
+}
+
+void startAnimation() {
+  //All Mallets up and Center
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(i, 2024);
+    dxl.setGoalPosition(i + 10, 1712);
+  }
+  delay(400);
+  //All Mallets rotate side one at a time
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(reorder[i], 1730);
+    delay(100);
+  }
+  delay(400);
+  //All Mallets rotate center one at a time
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(reorder[i], 2024);
+    delay(100);
+  }
+  delay(400);
+  //All Mallets rotate side at once
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(reorder[i], 1730);
+  }
+  delay(700);
+  //All Mallets rotate to start position
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(i, malletRotateLowNote[i]);
+    dxl.setGoalPosition(i, 1712);
+  }
+  delay(700);
+
+  //All Mallets rotate side at once
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(reorder[i], 1730);
+  }
+  delay(150);
+  //All Mallets rotate to start position
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(i, malletRotateLowNote[i]);
+    dxl.setGoalPosition(i, 1712);
+  }
+  delay(150);
+  //All Mallets rotate side at once
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(reorder[i], 1730);
+  }
+  delay(150);
+  //All Mallets rotate to start position
+  for (int i = 1; i < 8; i++) {
+    dxl.setGoalPosition(i, malletRotateLowNote[i]);
+    dxl.setGoalPosition(i, 1712);
+  }
+  delay(1000);
+  lowerAllMallets();//go to neutral Position and lower mallets slowly
+  torqueAllOff();//Torques Servos Off
 }
 
 void loop() {
 
-for (int x = 0; x < 16; x++) {
+for(int i = 0; i < 160; i++) {
 
-for (int y = 1; y < 8; y++) {
-if ( scale[x][y] != '0' ){
-    dxl.setGoalPosition(y + 10, malletDown);
-}
-}
-delay(time2Move);
-for (int y = 1; y < 8; y++) {
-    dxl.setGoalPosition(y + 10, malletUp);
-}
-
-for (int y = 1; y < 8; y++) {
-if ( scale[x + 1][y] > 95 ){ //lowercase ASCI letters all have higher values than 95, this lets me quickly check which octave is needed for next note
-    dxl.setGoalPosition(y, malletRotateHighNote[y] );
-}
-else {
-    dxl.setGoalPosition(y, malletRotateLowNote[y] );
-}
-
-delay(50);
+notesC[i] = odeC[i];
+notesD[i] = odeD[i];
+notesE[i] = odeE[i];
+notesF[i] = odeF[i];
+notesG[i] = odeG[i];
+notesA[i] = odeA[i];
+notesB[i] = odeB[i];
 
 }
 
-}
+    torqueAllOn(); //Torques Servos On
+    prepFirstNotes();//Move to first note Start Position
+    playnotesA(100); //plays sequence A at tempo of Millis between notes
+    playnotesB(100);
+    playnotesC(100);
+    lowerAllMallets();//go to neutral Position and lower mallets slowly
+    torqueAllOff();//Torques Servos Off
+    delay (5000);
 }
