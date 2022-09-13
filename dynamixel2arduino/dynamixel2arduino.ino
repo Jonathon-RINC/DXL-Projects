@@ -52,11 +52,11 @@ void setup() {
 
 void loop() {
   
-  DEBUG_SERIAL.print("Current Port Baudrate:");
+  DEBUG_SERIAL.print("Present Port Baudrate: ");
   DEBUG_SERIAL.println(dxl.getPortBaud());
 
-  DEBUG_SERIAL.print("DYNAMIXEL Model Number:");
-  DEBUG_SERIAL.println(dxl.getModelNumber(1));
+  DEBUG_SERIAL.print("DYNAMIXEL Model Number: ");
+  DEBUG_SERIAL.println(dxl.getModelNumber(DXL_ID));
   
   if( dxl.ping(DXL_ID) ) {
     DEBUG_SERIAL.print("DYNAMIXEL ");
@@ -70,101 +70,152 @@ void loop() {
   }  
   
   if( dxl.scan() ) {
-    DEBUG_SERIAL.print("DYNAMIXEL Scan Successful");
+    DEBUG_SERIAL.println("DYNAMIXEL Scan Successful");
   } 
   else {
-    DEBUG_SERIAL.print("DYNAMIXEL Scan Failed");
+    DEBUG_SERIAL.println("DYNAMIXEL Scan Failed");
   }
 
+  delay(2000);
+
   dxl.setID(DXL_ID, 2);
+  DEBUG_SERIAL.println("DYNAMIXEL ID Set to 2");
   
-  if( dxl.ping(2) ) {
+  if( dxl.ping(DXL_ID) ) {
     DEBUG_SERIAL.print("DYNAMIXEL ");
-    DEBUG_SERIAL.print(2);
+    DEBUG_SERIAL.print(DXL_ID);
     DEBUG_SERIAL.println(" Found");
   } 
   else {
     DEBUG_SERIAL.print("DYNAMIXEL ");
-    DEBUG_SERIAL.print(2);
+    DEBUG_SERIAL.print(DXL_ID);
     DEBUG_SERIAL.println(" Not Found");
   }  
   
   if( dxl.scan() ) {
-    DEBUG_SERIAL.print("DYNAMIXEL Scan Successful");
+    DEBUG_SERIAL.println("DYNAMIXEL Scan Successful");
   } 
   else {
-    DEBUG_SERIAL.print("DYNAMIXEL Scan Failed");
+    DEBUG_SERIAL.println("DYNAMIXEL Scan Failed");
   }
+  dxl.setID(2, DXL_ID);
+  DEBUG_SERIAL.println("DYNAMIXEL ID Set to 1");
+  delay(5000);
 
-  dxl.setProtocol(2, 1.0);
-  DEBUG_SERIAL.println("DYNAMIXEL Protocol Mode Set to 1.0");
-
-    if( dxl.scan() ) {
-    DEBUG_SERIAL.print("DYNAMIXEL Scan Successful");
-  } 
-  else {
-    DEBUG_SERIAL.print("DYNAMIXEL Scan Failed");
-  }
-
-  dxl.setProtocol(2, 2.0);
-  DEBUG_SERIAL.println("DYNAMIXEL Protocol Mode Set to 2.0");
-
-  dxl.ledOn();
+  dxl.ledOn(DXL_ID);
   DEBUG_SERIAL.println("LED On");
-  delay(1000);
-  dxl.ledOff();
+  delay(2000);
+  dxl.ledOff(DXL_ID);
   DEBUG_SERIAL.println("LED Off");
   
-  dxl.setOperatingMode(2, OP_VELOCITY);
+  if( dxl.setOperatingMode(DXL_ID, OP_VELOCITY) ) {
   DEBUG_SERIAL.println("Operating Mode Set to Velocity Mode");
-  dxl.setGoalVelocity(2, 50, UNIT_PERCENT);
-  DEBUG_SERIAL.println("Set 50% Goal Velocity");
   delay(1000);
+  dxl.setGoalVelocity(DXL_ID, 100, UNIT_PERCENT);
+  DEBUG_SERIAL.println("Set 100% Goal Velocity");
+  delay(1000);
+   }
+   else {
+    DEBUG_SERIAL.println("Could Not Change to Velocity Mode");
+  }
 
-  dxl.torqueOn(2);
+  dxl.torqueOn(DXL_ID);
   DEBUG_SERIAL.println("Torque Enabled");
-  dxl.setGoalVelocity(2, 50, UNIT_PERCENT);
+  delay(1000);
+  dxl.setGoalVelocity(DXL_ID, 50, UNIT_PERCENT);
   DEBUG_SERIAL.println("Set 50% Goal Velocity");
   delay(1000);
-  DEBUG_SERIAL.print("Current Velocity: ");
-  DEBUG_SERIAL.println(dxl.getPresentVelocity(2));
+  DEBUG_SERIAL.print("Present Velocity: ");
+  DEBUG_SERIAL.print(dxl.getPresentVelocity(DXL_ID, UNIT_RPM));
+  DEBUG_SERIAL.println("RPM");
   delay(2000);
-  
 
-  dxl.setOperatingMode(2, OP_POSITION);
-  DEBUG_SERIAL.println("Operating Mode Set to Position Mode Mode");
-  dxl.setGoalPosition(2, 0, UNIT_DEGREE);
+  dxl.setOperatingMode(DXL_ID, OP_POSITION);
+  DEBUG_SERIAL.println("Operating Mode Set to Position Mode");
+  dxl.setGoalPosition(DXL_ID, 0, UNIT_DEGREE);
   DEBUG_SERIAL.println("Set Goal Position to 0 Degrees");
   delay(1000);
 
-  dxl.torqueOff(2);
+  dxl.torqueOff(DXL_ID);
   DEBUG_SERIAL.println("Torque Disabled");
-  dxl.torqueOn(2);
+  dxl.torqueOn(DXL_ID);
   DEBUG_SERIAL.println("Torque Enabled");
-  dxl.setOperatingMode(2, OP_POSITION);
-  DEBUG_SERIAL.println("Operating Mode Set to Position Mode Mode");
-  dxl.setGoalPosition(2, 90, UNIT_DEGREE);
+  dxl.setOperatingMode(DXL_ID, OP_POSITION);
+  DEBUG_SERIAL.println("Operating Mode Set to Position Mode");
+  dxl.setGoalPosition(DXL_ID, 90, UNIT_DEGREE);
   DEBUG_SERIAL.println("Set Goal Position to 90 Degrees");
   delay(3000);
 
-  DEBUG_SERIAL.print("Current Absolute DYNAMIXEL Position:");
-  DEBUG_SERIAL.println(dxl.getPresentPosition(2));
-  DEBUG_SERIAL.print("Current Degree DYNAMIXEL Position:");
-  DEBUG_SERIAL.println(dxl.getPresentPosition(2, UNIT_DEGREE);
+  DEBUG_SERIAL.print("Present Absolute DYNAMIXEL Position:");
+  DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID));
+  DEBUG_SERIAL.print("Present Degree DYNAMIXEL Position:");
+  DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID, UNIT_DEGREE));
   delay(1000);
+
+  dxl.torqueOff(DXL_ID);
+  DEBUG_SERIAL.println("Torque Disabled");
+  dxl.torqueOn(DXL_ID);
+  DEBUG_SERIAL.println("Torque Enabled");
+  dxl.setOperatingMode(DXL_ID, OP_CURRENT);
+  DEBUG_SERIAL.println("Operating Mode Set to Present Mode");
+  dxl.setGoalCurrent(DXL_ID, 20);
+  DEBUG_SERIAL.println("Set Goal Present to 20 DYNAMIXEL Units");
+  delay(1000);
+  DEBUG_SERIAL.print("Present Velocity: ");
+  DEBUG_SERIAL.print(dxl.getPresentVelocity(DXL_ID, UNIT_PERCENT));
+  DEBUG_SERIAL.println("%");
+  DEBUG_SERIAL.print("Present Current: ");
+  DEBUG_SERIAL.print(dxl.getPresentCurrent(DXL_ID, UNIT_MILLI_AMPERE));
+  DEBUG_SERIAL.println("mA");
+  delay(2000);
+
+  dxl.torqueOff(DXL_ID);
+  DEBUG_SERIAL.println("Torque Disabled");
+  dxl.torqueOn(DXL_ID);
+  DEBUG_SERIAL.println("Torque Enabled");
+  dxl.setOperatingMode(DXL_ID, OP_PWM);
+  DEBUG_SERIAL.println("Operating Mode Set to PWM Mode");
+  dxl.setGoalPWM(DXL_ID, 100);
+  DEBUG_SERIAL.println("Set Goal PWM to 100 DYNAMIXEL Units");
+  delay(1000);
+  DEBUG_SERIAL.print("Present PWM: ");
+  DEBUG_SERIAL.print(dxl.getPresentVelocity(DXL_ID, UNIT_PERCENT));
+  DEBUG_SERIAL.println("%");
+  DEBUG_SERIAL.print("Present Current: ");
+  DEBUG_SERIAL.print(dxl.getPresentCurrent(DXL_ID, UNIT_PERCENT));
+  DEBUG_SERIAL.println("%");
+  delay(2000);
+  dxl.setGoalPWM(DXL_ID, -100);
+  DEBUG_SERIAL.println("Set Goal PWM to -100 DYNAMIXEL Units");
+  delay(1000);
+  DEBUG_SERIAL.print("Present PWM: ");
+  DEBUG_SERIAL.print(dxl.getPresentVelocity(DXL_ID, UNIT_PERCENT));
+  DEBUG_SERIAL.println("%");
+  DEBUG_SERIAL.print("Present Current: ");
+  DEBUG_SERIAL.print(dxl.getPresentCurrent(DXL_ID, UNIT_PERCENT));
+  DEBUG_SERIAL.println("%");
+  delay(2000);
+
+  if( dxl.getTorqueEnableStat(DXL_ID) ) {
+    DEBUG_SERIAL.print("DYNAMIXEL Torque On");
+  } 
+  else {
+    DEBUG_SERIAL.print("DYNAMIXEL Torque Off");
+  }
+  delay(1000);
+  dxl.torqueOff(DXL_ID);
+  if( dxl.getTorqueEnableStat(DXL_ID) ) {
+    DEBUG_SERIAL.print("DYNAMIXEL Torque On");
+  } 
+  else {
+    DEBUG_SERIAL.print("DYNAMIXEL Torque Off");
+  }
+
+  dxl.writeControlTableItem(OPERATING_MODE, DXL_ID, 3);
+  dxl.writeControlTableItem(TORQUE_ENABLE, DXL_ID, 1);
+  dxl.writeControlTableItem(116, DXL_ID, 0);
+  delay(2000);
   
-
-setGoalPWM()
-getPresentPWM()
-setGoalCurrent()
-getPresentCurrent()
-getTorqueEnableStat()
-readControlTableItem()
-writeControlTableItem()
-
-
-
+  dxl.readControlTableItem(GOAL_POSITION, DXL_ID);
 
 }
-
-//setBaudrate()  
